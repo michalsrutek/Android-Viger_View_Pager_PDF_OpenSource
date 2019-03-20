@@ -6,7 +6,7 @@ package com.necistudio.vigerpdf.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.view.PagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +42,7 @@ public class VigerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.pdf_item, container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.imgData);
+        ImageView imageView = itemView.findViewById(R.id.imgData);
         imageView.setImageBitmap(itemList.get(position));
         container.addView(itemView);
 
