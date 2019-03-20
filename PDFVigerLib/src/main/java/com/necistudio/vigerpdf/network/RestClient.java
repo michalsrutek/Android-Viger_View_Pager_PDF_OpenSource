@@ -17,7 +17,7 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 
-public class RestClient  {
+public class RestClient {
 
     private static ApiInterface ApiInterface;
 
@@ -25,7 +25,7 @@ public class RestClient  {
         if (ApiInterface == null) {
             OkHttpClient okclient = new OkHttpClient.Builder()
                     .readTimeout(30, TimeUnit.SECONDS)
-                    .connectTimeout(50,TimeUnit.SECONDS)
+                    .connectTimeout(50, TimeUnit.SECONDS)
                     .addInterceptor(new Interceptor() {
                         @Override
                         public Response intercept(Chain chain) throws IOException {

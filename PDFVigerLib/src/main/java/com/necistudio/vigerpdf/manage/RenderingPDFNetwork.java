@@ -1,23 +1,18 @@
 package com.necistudio.vigerpdf.manage;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 
-import com.necistudio.vigerpdf.VigerPDF;
 import com.necistudio.vigerpdf.network.RestClient;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -29,16 +24,14 @@ import retrofit2.Response;
  */
 
 public class RenderingPDFNetwork {
-    private Context context;
-    public RenderingPDFNetwork(Context context, String endpoint) {
-        this.context = context;
+    public RenderingPDFNetwork(final Context context, String endpoint) {
         final RestClient.ApiInterface service = RestClient.getClient();
         Call<ResponseBody> call = service.streamFile(endpoint);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    writeResponseBodyToDisk(response.body());
+                    writeResponseBodyToDisk(context, response.body());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -51,15 +44,15 @@ public class RenderingPDFNetwork {
         });
     }
 
-    private boolean writeResponseBodyToDisk(final ResponseBody body) {
+    private static void writeResponseBodyToDisk(final Context context, final ResponseBody body) {
         new AsyncTask<Void, String, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 try {
-                    String root = Environment.getExternalStorageDirectory().toString();
+                    String root = context.getCacheDir().toString();
                     final File pdfFolder = new File(root + "/Android/data/" + context.getPackageName());
                     pdfFolder.mkdirs();
-                    String path = pdfFolder + "/" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                    String path = pdfFolder + "/" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(new Date());
                     pdfFolder.createNewFile();
                     InputStream inputStream = null;
                     OutputStream outputStream = null;
@@ -106,7 +99,7 @@ public class RenderingPDFNetwork {
 
             @Override
             protected void onProgressUpdate(String... values) {
-                Log.e("data",""+Integer.parseInt(values[0]));
+                //Log.d("data", "" + Integer.parseInt(values[0]));
             }
 
             @Override
@@ -120,6 +113,5 @@ public class RenderingPDFNetwork {
                 }
             }
         }.execute();
-        return true;
     }
 }
